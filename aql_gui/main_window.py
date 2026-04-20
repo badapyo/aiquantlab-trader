@@ -188,6 +188,9 @@ class MainWindow(QMainWindow):
             return
 
         config = self.setup_tab.get_config()
+        # Auto-persist so the user never has to press Save separately.
+        import auto_trader
+        auto_trader.save_config(config)
         config['dry'] = dry
         config['force'] = force
         config['testnet'] = self.cb_testnet.isChecked()
