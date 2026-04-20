@@ -6,8 +6,12 @@ from PyQt6.QtWidgets import (
     QPushButton, QCheckBox, QLabel, QMessageBox, QStatusBar,
     QSystemTrayIcon, QMenu,
 )
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QTimer
 from PyQt6.QtGui import QIcon, QPixmap, QAction
+
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import auto_trader
 
 from .setup_tab import SetupTab
 from .dashboard_tab import DashboardTab
@@ -35,6 +39,22 @@ class MainWindow(QMainWindow):
         self._build_ui()
         self._setup_log_handler()
         self._setup_tray()
+
+        # Resume previous run state: if the user last left the app in a
+        # "started" state, auto-click Start on launch.
+        QTimer.singleShot(600, self._maybe_auto_start)
+
+    def _maybe_auto_start(self):
+        cfg = auto_trader.load_config()
+        if not cfg.get('auto_start'):
+            return
+        # Don't auto-start if the saved config is incomplete.
+        err = self.setup_tab.validate()
+        if err:
+            self.lbl_status.setText(f"Auto-start skipped: {err}")
+            return
+        self.lbl_status.setText("Resuming last session...")
+        self._on_start_stop()
 
     def _build_ui(self):
         central = QWidget()
@@ -189,8 +209,11 @@ class MainWindow(QMainWindow):
 
         config = self.setup_tab.get_config()
         # Auto-persist so the user never has to press Save separately.
-        import auto_trader
-        auto_trader.save_config(config)
+        # Mark auto_start=True only for real Start (not Dry Run / Force Rebal),
+        # so the next launch resumes only when the user actually intended to run.
+        persisted = dict(config)
+        persisted['auto_start'] = not (dry or force)
+        auto_trader.save_config(persisted)
         config['dry'] = dry
         config['force'] = force
         config['testnet'] = self.cb_testnet.isChecked()
@@ -222,6 +245,11 @@ class MainWindow(QMainWindow):
             self.trading_thread.stop()
         self.btn_start.setText("Stopping...")
         self.btn_start.setEnabled(False)
+        # User explicitly stopped → clear auto_start so next launch stays idle.
+        cfg = auto_trader.load_config()
+        if cfg.get('auto_start'):
+            cfg['auto_start'] = False
+            auto_trader.save_config(cfg)
 
     def _set_running_ui(self, running, mode=""):
         if running:
