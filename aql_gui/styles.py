@@ -46,6 +46,48 @@ QLineEdit, QSpinBox, QComboBox {
     min-height: 20px;
 }
 
+QSpinBox {
+    padding-right: 24px;        /* reserve space for up/down buttons so digits don't overlap */
+}
+
+QSpinBox::up-button, QSpinBox::down-button {
+    subcontrol-origin: border;
+    width: 20px;
+    background: #1a4378;
+    border-left: 1px solid #2a2a4a;
+}
+
+QSpinBox::up-button {
+    subcontrol-position: top right;
+    border-top-right-radius: 3px;
+    border-bottom: 1px solid #2a2a4a;
+}
+
+QSpinBox::down-button {
+    subcontrol-position: bottom right;
+    border-bottom-right-radius: 3px;
+}
+
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background: #1e5a9e;
+}
+
+QSpinBox::up-arrow {
+    image: none;
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 5px solid #ffffff;
+}
+
+QSpinBox::down-arrow {
+    image: none;
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid #ffffff;
+}
+
 QLineEdit:focus, QSpinBox:focus, QComboBox:focus {
     border: 1px solid #0d47a1;
 }

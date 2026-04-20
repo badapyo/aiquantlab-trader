@@ -68,35 +68,34 @@ class MainWindow(QMainWindow):
 
         bottom_layout.addStretch()
 
-        self.cb_testnet = QCheckBox("Testnet")
+        self.cb_testnet = QCheckBox("☐ Testnet")
         self.cb_testnet.setStyleSheet("""
             QCheckBox {
                 color: #ffab00;
                 font-weight: 700;
-                font-size: 13px;
-                padding: 4px 8px;
-                spacing: 8px;
-            }
-            QCheckBox::indicator {
-                width: 20px;
-                height: 20px;
-                border: 2px solid #ffab00;
+                font-size: 14px;
+                padding: 4px 10px;
+                spacing: 0px;
+                border: 1px solid #ffab00;
                 border-radius: 4px;
                 background: #1a1a2a;
             }
-            QCheckBox::indicator:hover {
-                border-color: #ffcd38;
+            QCheckBox:hover {
                 background: #252535;
             }
-            QCheckBox::indicator:checked {
-                background: #ffab00;
-                border-color: #ffab00;
-                image: none;
-            }
             QCheckBox:checked {
-                color: #ffcd38;
+                color: #0f1a0f;
+                background: #ffab00;
+                border-color: #ffcd38;
+            }
+            QCheckBox::indicator {
+                width: 0px;
+                height: 0px;
             }
         """)
+        # Toggle the leading glyph so the user gets an explicit ✓ / ☐ signal.
+        self.cb_testnet.stateChanged.connect(
+            lambda s: self.cb_testnet.setText("✓ Testnet (ON)" if s else "☐ Testnet"))
         bottom_layout.addWidget(self.cb_testnet)
 
         self.btn_dryrun = QPushButton("Dry Run")

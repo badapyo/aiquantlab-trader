@@ -122,7 +122,7 @@ class SetupTab(QWidget):
             spin.setRange(0, 50)
             spin.setValue(10)
             spin.setSuffix("%")
-            spin.setFixedWidth(70)
+            spin.setFixedWidth(90)
             row.addWidget(spin)
 
             # Sync slider <-> spin
