@@ -216,7 +216,13 @@ class ServerSession:
                 msgs = {
                     'invalid_token': "Invalid token.",
                     'no_subscription': "No active subscription. Annual subscription required.",
-                    'device_mismatch': "Already running on another device. Please close the existing program.",
+                    'device_mismatch': (
+                        "Already running on another device.\n\n"
+                        "If you just closed it normally: try again.\n"
+                        "If the previous app crashed / the PC shut down unexpectedly: "
+                        "please wait about 5 minutes and try again — the server will "
+                        "automatically release the old session."
+                    ),
                     'invalid_signature': "Request signature error. Please reinstall.",
                     'blocked': "Too many requests. Please retry later.",
                     'rate_limited': "Rate limit exceeded. Please retry later.",
