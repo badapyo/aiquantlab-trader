@@ -13,6 +13,29 @@ import auto_trader
 COINS = ['BTC', 'ETH', 'SOL', 'DOGE', 'XRP', 'TRX', 'ADA', 'BCH', 'LINK', 'BNB']
 
 
+class NoWheelSpinBox(QSpinBox):
+    """QSpinBox that ignores mouse wheel — prevents accidental value changes while scrolling."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
+    def wheelEvent(self, event):
+        event.ignore()
+
+
+class NoWheelSlider(QSlider):
+    """QSlider that ignores mouse wheel unless focused."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
+    def wheelEvent(self, event):
+        if self.hasFocus():
+            super().wheelEvent(event)
+        else:
+            event.ignore()
+
+
 class SetupTab(QWidget):
     def __init__(self):
         super().__init__()
@@ -68,7 +91,7 @@ class SetupTab(QWidget):
         self.passphrase_label.setVisible(False)
         self.passphrase_input.setVisible(False)
 
-        self.leverage_spin = QSpinBox()
+        self.leverage_spin = NoWheelSpinBox()
         self.leverage_spin.setRange(1, 10)
         self.leverage_spin.setValue(3)
         ex_form.addRow("Leverage:", self.leverage_spin)
@@ -90,12 +113,12 @@ class SetupTab(QWidget):
             label.setStyleSheet("font-weight: bold;")
             row.addWidget(label)
 
-            slider = QSlider(Qt.Orientation.Horizontal)
+            slider = NoWheelSlider(Qt.Orientation.Horizontal)
             slider.setRange(0, 50)
             slider.setValue(10)
             row.addWidget(slider)
 
-            spin = QSpinBox()
+            spin = NoWheelSpinBox()
             spin.setRange(0, 50)
             spin.setValue(10)
             spin.setSuffix("%")
